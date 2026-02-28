@@ -76,7 +76,7 @@ Built by Abraham Guerrero.
 
 ## 🏗️ Contracts
 
-- EscrowFactory.sol → Creates project-specific escrow vaults
+- EscrowFactory.sol → Deploys isolated milestone-based escrow vaults per project
 - EscrowVault.sol → Manages milestone logic and fund releases
 - BuildLinkFunctionsConsumer.sol → Oracle interaction layer (mocked for MVP)
 
