@@ -60,3 +60,30 @@ Long-term potential:
 ---
 
 Built by Abraham Guerrero.
+
+---
+
+## 🚀 Quick Start
+
+1. Deploy EscrowFactory.sol
+2. Create a new EscrowVault contract for a project
+3. Developer deposits funds
+4. Contractor submits milestone proof (hash of inspection/sign-off)
+5. Developer approves milestone
+6. Funds are released automatically (retention held if configured)
+
+---
+
+## 🏗️ Contracts
+
+- EscrowFactory.sol → Creates project-specific escrow vaults
+- EscrowVault.sol → Manages milestone logic and fund releases
+- BuildLinkFunctionsConsumer.sol → Oracle interaction layer (mocked for MVP)
+
+---
+
+## 🔐 Tech Stack
+
+- Solidity ^0.8.20
+- Chainlink Functions (architecture-ready)
+- GitHub-hosted smart contracts
