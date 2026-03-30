@@ -1,89 +1,125 @@
-## BuildLink
+# BuildLink
 
-BuildLink is an automated milestone-based construction escrow system powered by Chainlink.
+**Automated milestone-based escrow for construction — powered by smart contracts.**
+
+BuildLink eliminates payment delays, retainage disputes, and administrative overhead in real estate development by replacing manual processes with programmable financial infrastructure on-chain.
 
 ---
 
-## 🏗 Problem
+## The Problem
 
-In real estate development and construction, milestone payments are delayed due to manual verification processes such as inspection approvals, delivery confirmations, and project manager sign-offs.
+In construction and real estate development, getting paid is slow and unreliable:
 
-This creates:
-- Cash flow instability
-- Retainage disputes
-- Administrative overhead
-- Lack of transparency between stakeholders
+- Milestone payments require manual approvals, inspections, and sign-offs
+- Retainage is held arbitrarily and released late — or disputed
+- No transparency between developers, contractors, and lenders
+- Cash flow instability forces contractors to finance their own work
 
 There is no programmable infrastructure connecting real-world construction milestones to automated financial execution.
 
 ---
 
-## 💡 Solution
+## The Solution
 
-BuildLink introduces a smart contract-based escrow system that automates milestone payments.
+BuildLink locks project funds in a smart contract escrow. Payments are released automatically when milestone conditions are met — no middlemen, no delays, no disputes.
 
-Funds are locked in escrow and released when predefined conditions are met.
-
-By integrating Oracle infrastructure, verified off-chain events can trigger on-chain escrow releases.
-
----
-
-## ⚙ Architecture
-
-- Solidity-based escrow contracts
-- Milestone state machine logic
-- Oracle interaction layer
-- Future support for automated triggers
+- Developer deposits funds into the escrow vault
+- Contractor submits proof of completion (hash of inspection, delivery, sign-off)
+- Developer approves the milestone
+- Funds are released instantly and on-chain
+- Retainage is held automatically and released at project closeout
 
 ---
 
-## 🔗 Chainlink Integration
+## Live Contracts — Base Mainnet
 
-The BuildLinkFunctionsConsumer.sol contract represents the oracle interaction layer.
+| Contract | Address |
+|---|---|
+| EscrowFactory | [0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E](https://basescan.org/address/0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E) |
+| BuildLinkFunctionsConsumer | [0x9EA6AEc15632B3B2180C9BEBEF2C61E68D16243b](https://basescan.org/address/0x9EA6AEc15632B3B2180C9BEBEF2C61E68D16243b) |
 
-It allows verified off-chain data to update escrow conditions on-chain.
-
-This bridges real-world construction events with programmable financial infrastructure.
-
----
-
-## 🌎 Vision
-
-BuildLink aims to modernize construction finance by introducing milestone-based programmable escrow infrastructure for real estate development.
-
-Long-term potential:
-- Automated retainage logic
-- Tokenized milestone financing
-- On-chain lender disbursements
-- Transparent contractor payment flows
+> EscrowVault is deployed per project automatically by EscrowFactory.
 
 ---
 
-Built by Abraham Guerrero.
+## How It Works
+
+```
+Developer creates project → EscrowFactory deploys EscrowVault
+Developer funds vault → ETH locked in escrow
+Developer creates milestones → Contractor gets to work
+Contractor submits proof hash → Developer reviews and approves
+Developer pays milestone → Net amount released, retainage held
+All milestones paid → Developer releases retainage
+```
 
 ---
 
-## 🚀 Quick Start
+## Architecture
 
-1. Deploy EscrowFactory.sol
-2. Create a new EscrowVault contract for a project
-3. Developer deposits funds
-4. Contractor submits milestone proof (hash of inspection/sign-off)
-5. Developer approves milestone
-6. Funds are released automatically (retention held if configured)
+```
+EscrowFactory.sol
+└── Deploys one EscrowVault per project
 
----
+EscrowVault.sol
+└── Milestone state machine: NONE → SUBMITTED → APPROVED → PAID
+└── Retainage logic: held per milestone, released at closeout
+└── Dispute handling: developer can dispute any submitted milestone
 
-## 🏗️ Contracts
-
-- EscrowFactory.sol → Deploys isolated milestone-based escrow vaults per project
-- EscrowVault.sol → Manages milestone logic and fund releases
-- BuildLinkFunctionsConsumer.sol → Oracle interaction layer (mocked for MVP)
+BuildLinkFunctionsConsumer.sol
+└── Oracle interaction layer (MVP mock — Chainlink Functions architecture-ready)
+```
 
 ---
 
-## 🔐 Tech Stack
+## Milestone States
+
+| State | Description |
+|---|---|
+| NONE | Milestone created, waiting for contractor |
+| SUBMITTED | Contractor submitted proof hash |
+| APPROVED | Developer approved, ready to pay |
+| PAID | Payment released to contractor |
+| DISPUTED | Developer disputed the submission |
+
+---
+
+## Quick Start
+
+```bash
+git clone https://github.com/Aguerrerop19/buildlink
+cd buildlink
+npm install
+npx hardhat compile
+```
+
+Deploy to Base mainnet:
+```bash
+cp .env.example .env
+# Fill in your PRIVATE_KEY and BASE_MAINNET_RPC_URL
+npx hardhat run scripts/deploy.js --network base
+```
+
+---
+
+## Tech Stack
 
 - Solidity ^0.8.20
+- Hardhat
+- Base (Coinbase L2)
 - Chainlink Functions (architecture-ready)
-- GitHub-hosted smart contracts
+
+---
+
+## Vision
+
+BuildLink is the financial infrastructure layer for construction:
+
+- Automated retainage logic triggered by project completion
+- Tokenized milestone financing for lenders
+- On-chain disbursements replacing wire transfers
+- Transparent payment flows for all stakeholders
+
+---
+
+Built by [Abraham Guerrero](https://github.com/Aguerrerop19)
