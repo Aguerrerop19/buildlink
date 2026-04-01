@@ -33,6 +33,8 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 ## Live Contracts — Base Mainnet
 
+### ETH Escrow
+
 | Contract | Address |
 |---|---|
 | EscrowFactory | [0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E](https://basescan.org/address/0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E) |
@@ -40,10 +42,20 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 > EscrowVault is deployed per project automatically by EscrowFactory.
 
+### USDC Escrow
+
+| Contract | Address |
+|---|---|
+| EscrowFactoryUSDC | [0xd1d6362f340969626Ca1CBFD7876DF28300B78A0](https://basescan.org/address/0xd1d6362f340969626Ca1CBFD7876DF28300B78A0#code) |
+| USDC (Base Mainnet) | [0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913](https://basescan.org/address/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) |
+
+> EscrowVaultUSDC is deployed per project automatically by EscrowFactoryUSDC. Contract verified on Basescan.
+
 ---
 
 ## How It Works
 
+### ETH flow
 ```
 Developer creates project → EscrowFactory deploys EscrowVault
 Developer funds vault → ETH locked in escrow
@@ -53,19 +65,46 @@ Developer pays milestone → Net amount released, retainage held
 All milestones paid → Developer releases retainage
 ```
 
+### USDC flow
+```
+Developer creates project → EscrowFactoryUSDC deploys EscrowVaultUSDC
+Developer approves USDC spend → Developer calls depositFunds()
+Developer creates milestones → Contractor gets to work
+Contractor submits proof hash → Developer reviews and approves
+Developer pays milestone → USDC released, retainage held
+All milestones paid → Developer releases retainage in USDC
+```
+
 ---
 
 ## Architecture
 
 ```
+ETH System
+──────────
 EscrowFactory.sol
 └── Deploys one EscrowVault per project
 
 EscrowVault.sol
-└── Milestone state machine: NONE → SUBMITTED → APPROVED → PAID
+└── Milestone state machine: NONE → SUBMITTED → APPROVED → PAID → DISPUTED
+└── Native ETH deposits via receive()
 └── Retainage logic: held per milestone, released at closeout
-└── Dispute handling: developer can dispute any submitted milestone
 
+USDC System
+───────────
+EscrowFactoryUSDC.sol
+└── Deploys one EscrowVaultUSDC per project
+└── USDC address set at factory deployment
+
+EscrowVaultUSDC.sol
+└── Mirrors EscrowVault logic using IERC20 (USDC, 6 decimals)
+└── depositFunds(uint256) with ERC-20 transferFrom instead of receive()
+└── Milestone state machine: NONE → SUBMITTED → APPROVED → PAID → DISPUTED
+└── Retainage logic: held per milestone, released at closeout
+└── Follows checks-effects-interactions
+
+Shared
+──────
 BuildLinkFunctionsConsumer.sol
 └── Oracle interaction layer (MVP mock — Chainlink Functions architecture-ready)
 ```
@@ -93,11 +132,16 @@ npm install
 npx hardhat compile
 ```
 
-Deploy to Base mainnet:
+Deploy ETH contracts to Base mainnet:
 ```bash
 cp .env.example .env
 # Fill in your PRIVATE_KEY and BASE_MAINNET_RPC_URL
 npx hardhat run scripts/deploy.js --network base
+```
+
+Deploy USDC contracts to Base mainnet:
+```bash
+npx hardhat run scripts/deployUSDC.js --network base
 ```
 
 ---
@@ -107,6 +151,7 @@ npx hardhat run scripts/deploy.js --network base
 - Solidity ^0.8.20
 - Hardhat
 - Base (Coinbase L2)
+- USDC (Circle, native Base Mainnet)
 - Chainlink Functions (architecture-ready)
 
 ---
