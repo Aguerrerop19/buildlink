@@ -18,6 +18,7 @@ contract EscrowVaultUSDC {
     address public immutable contractor;
 
     uint256 public immutable retainageBps; // e.g. 500 = 5%
+    uint256 public retainageReleaseThresholdBps; // e.g. 8000 = 80%
     uint256 public totalDeposited;
     uint256 public totalPaid;
     uint256 public retainageHeld;
@@ -52,7 +53,7 @@ contract EscrowVaultUSDC {
         _;
     }
 
-    constructor(address _usdc, address _contractor, uint256 _retainageBps) {
+    constructor(address _usdc, address _contractor, uint256 _retainageBps, uint256 _retainageReleaseThresholdBps) {
         require(_usdc != address(0), "Invalid USDC");
         require(_contractor != address(0), "Invalid contractor");
         require(_retainageBps <= 2000, "Retainage too high"); // max 20%
@@ -61,6 +62,7 @@ contract EscrowVaultUSDC {
         developer = msg.sender;
         contractor = _contractor;
         retainageBps = _retainageBps;
+        retainageReleaseThresholdBps = _retainageReleaseThresholdBps;
     }
 
     /// @notice Developer deposits USDC into escrow.
@@ -162,11 +164,27 @@ contract EscrowVaultUSDC {
     }
 
     /// @notice Release all held retainage to contractor at project closeout.
-    ///         All milestones must be PAID before retainage can be released.
+    ///         Requires that a majority threshold of non-disputed milestones are PAID.
+    ///         DISPUTED milestones are excluded from the eligible count.
     function releaseRetainage() external onlyDeveloper {
-        for (uint256 i = 0; i < milestones.length; i++) {
-            require(milestones[i].status == MilestoneStatus.PAID, "Not all paid");
+        uint256 total = milestones.length;
+        uint256 paidCount = 0;
+        uint256 disputedCount = 0;
+
+        for (uint256 i = 0; i < total; i++) {
+            if (milestones[i].status == MilestoneStatus.PAID) {
+                paidCount++;
+            } else if (milestones[i].status == MilestoneStatus.DISPUTED) {
+                disputedCount++;
+            }
         }
+
+        uint256 eligible = total - disputedCount;
+        require(eligible > 0, "No eligible milestones");
+        require(
+            (paidCount * 10000) / eligible >= retainageReleaseThresholdBps,
+            "Threshold not met"
+        );
 
         uint256 amount = retainageHeld;
         require(amount > 0, "No retainage");

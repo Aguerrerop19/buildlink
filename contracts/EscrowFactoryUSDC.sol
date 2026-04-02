@@ -46,7 +46,7 @@ contract EscrowFactoryUSDC {
         uint256 retainageBps,
         string calldata name
     ) external returns (address vault, uint256 projectId) {
-        EscrowVaultUSDC v = new EscrowVaultUSDC(usdc, contractor, retainageBps);
+        EscrowVaultUSDC v = new EscrowVaultUSDC(usdc, contractor, retainageBps, 8000);
 
         projects.push(Project({
             vault: address(v),

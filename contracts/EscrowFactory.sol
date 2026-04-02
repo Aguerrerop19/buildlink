@@ -32,7 +32,7 @@ contract EscrowFactory {
         uint256 retainageBps,
         string calldata name
     ) external payable returns (address vault, uint256 projectId) {
-        EscrowVault v = (new EscrowVault){value: msg.value}(contractor, retainageBps);
+        EscrowVault v = (new EscrowVault){value: msg.value}(contractor, retainageBps, 8000);
 
         projects.push(Project({
             vault: address(v),
