@@ -37,8 +37,8 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 | Contract | Address |
 |---|---|
-| EscrowFactory | [0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E](https://basescan.org/address/0x20f5cB9063E6bB1461FD5C2a2CA638FC50474B1E) |
-| BuildLinkFunctionsConsumer | [0x9EA6AEc15632B3B2180C9BEBEF2C61E68D16243b](https://basescan.org/address/0x9EA6AEc15632B3B2180C9BEBEF2C61E68D16243b) |
+| EscrowFactory | [0x5Ead178647b041B47A8598d97524d94495b95E57](https://basescan.org/address/0x5Ead178647b041B47A8598d97524d94495b95E57) |
+| BuildLinkFunctionsConsumer | [0x2E04a78C78397885249CF9814E317d643F352670](https://basescan.org/address/0x2E04a78C78397885249CF9814E317d643F352670) |
 
 > EscrowVault is deployed per project automatically by EscrowFactory.
 
@@ -46,7 +46,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 | Contract | Address |
 |---|---|
-| EscrowFactoryUSDC | [0xd1d6362f340969626Ca1CBFD7876DF28300B78A0](https://basescan.org/address/0xd1d6362f340969626Ca1CBFD7876DF28300B78A0#code) |
+| EscrowFactoryUSDC | [0x52Fe0996920104B45ad8e3183A48df4a62668BC0](https://basescan.org/address/0x52Fe0996920104B45ad8e3183A48df4a62668BC0) |
 | USDC (Base Mainnet) | [0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913](https://basescan.org/address/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) |
 
 > EscrowVaultUSDC is deployed per project automatically by EscrowFactoryUSDC. Contract verified on Basescan.
@@ -62,7 +62,7 @@ Developer funds vault → ETH locked in escrow
 Developer creates milestones → Contractor gets to work
 Contractor submits proof hash → Developer reviews and approves
 Developer pays milestone → Net amount released, retainage held
-All milestones paid → Developer releases retainage
+80% of milestones PAID (DISPUTED milestones excluded) → Developer releases retainage
 ```
 
 ### USDC flow
@@ -72,7 +72,7 @@ Developer approves USDC spend → Developer calls depositFunds()
 Developer creates milestones → Contractor gets to work
 Contractor submits proof hash → Developer reviews and approves
 Developer pays milestone → USDC released, retainage held
-All milestones paid → Developer releases retainage in USDC
+80% of milestones PAID (DISPUTED milestones excluded) → Developer releases retainage in USDC
 ```
 
 ---
@@ -153,6 +153,9 @@ npx hardhat run scripts/deployUSDC.js --network base
 - Base (Coinbase L2)
 - USDC (Circle, native Base Mainnet)
 - Chainlink Functions (architecture-ready)
+- wagmi v2 + RainbowKit v2 + viem v2 (frontend)
+- Next.js 16 + TypeScript + Tailwind CSS (frontend)
+- Vercel (deployment)
 
 ---
 
@@ -164,6 +167,20 @@ BuildLink is the financial infrastructure layer for construction:
 - Tokenized milestone financing for lenders
 - On-chain disbursements replacing wire transfers
 - Transparent payment flows for all stakeholders
+
+---
+
+## Integration
+
+BuildLink is not a replacement for Procore or Textura.
+It is a financial infrastructure layer that sits alongside existing construction platforms:
+
+- **Procore / Textura** — Project data, SOV approvals, and milestone sign-offs flow from your existing platform
+- **Chainlink Functions** — Bridges off-chain approvals to on-chain execution via oracle network
+- **BuildLink Vault** — Releases milestone payments instantly on Base Mainnet, no banks, no delays
+
+Webhook endpoint (conceptual): POST /api/procore/webhook
+Chainlink Functions consumer: 0x2E04a78C78397885249CF9814E317d643F352670
 
 ---
 
