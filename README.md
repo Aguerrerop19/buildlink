@@ -184,4 +184,4 @@ Chainlink Functions consumer: 0x2E04a78C78397885249CF9814E317d643F352670
 
 ---
 
-Built by [Abraham Guerrero](https://github.com/Aguerrerop19)
+Built by: Abraham J. Guerrero
