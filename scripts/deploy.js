@@ -1,37 +1,23 @@
 const { ethers } = require("hardhat");
 
+const ADMIN = "0xFaae61D0a3E4d03Eb6C2f6531Eafc6684a6ef4E2";
+
 async function main() {
   const [deployer] = await ethers.getSigners();
 
   console.log("===========================================");
-  console.log("Desplegando BuildLink con la cuenta:", deployer.address);
+  console.log("Deploying BuildLinkFunctionsConsumer");
+  console.log("Deployer:", deployer.address);
+  console.log("Admin:   ", ADMIN);
   console.log("===========================================\n");
 
-  // 1. Desplegar EscrowFactory
-  console.log("1. Desplegando EscrowFactory...");
-  const EscrowFactory = await ethers.getContractFactory("EscrowFactory");
-  const factory = await EscrowFactory.deploy();
-  await factory.waitForDeployment();
-  const factoryAddress = await factory.getAddress();
-  console.log("   EscrowFactory desplegado en:", factoryAddress);
-
-  // 2. Desplegar BuildLinkFunctionsConsumer
-  console.log("\n2. Desplegando BuildLinkFunctionsConsumer...");
   const FunctionsConsumer = await ethers.getContractFactory("BuildLinkFunctionsConsumer");
-  const consumer = await FunctionsConsumer.deploy();
+  const consumer = await FunctionsConsumer.deploy(ADMIN);
   await consumer.waitForDeployment();
   const consumerAddress = await consumer.getAddress();
-  console.log("   BuildLinkFunctionsConsumer desplegado en:", consumerAddress);
 
-  // Nota: EscrowVault se despliega automáticamente desde EscrowFactory
-  // al crear cada proyecto — no se despliega directamente aquí.
-
-  console.log("\n===========================================");
-  console.log("DESPLIEGUE COMPLETADO");
-  console.log("===========================================");
-  console.log("EscrowFactory:               ", factoryAddress);
-  console.log("BuildLinkFunctionsConsumer:  ", consumerAddress);
-  console.log("\nGuarda estas direcciones — las necesitarás para interactuar con BuildLink.");
+  console.log("BuildLinkFunctionsConsumer deployed at:", consumerAddress);
+  console.log("\nNext: add this address as a consumer on Chainlink Functions subscription 143.");
 }
 
 main()
