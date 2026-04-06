@@ -53,6 +53,23 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 ---
 
+## Live Demo — Base Mainnet
+
+End-to-end Chainlink Functions oracle loop proven on 2026-04-06:
+
+| Step | Transaction |
+|---|---|
+| sendRequest() called | [0xedef20d0...](https://basescan.org/tx/0xedef20d02efb5444ea82e9524a763492395555bd3e75ff2a70903b9f89e31856) |
+| fulfillRequest + MilestoneVerified | [0x74b065f6...](https://basescan.org/tx/0x74b065f6dc534eb217b222c6b2279d9dc9e88dcfba790217ddb89f5eee4e17a9) |
+| approveMilestone confirmed | [0xa5a89bea...](https://basescan.org/tx/0xa5a89bea0db49bc541ee4857a52a89a21767ae09fb0241cb7f202456e72aa02e) |
+
+Chainlink DON fulfilled in ~41 seconds on Base Mainnet.
+Vault: 0x6E181b570d447354d9127eB713960eE32852daDF
+Consumer: 0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55
+Subscription ID: 143
+
+---
+
 ## How It Works
 
 ### ETH flow
@@ -152,7 +169,7 @@ npx hardhat run scripts/deployUSDC.js --network base
 - Hardhat
 - Base (Coinbase L2)
 - USDC (Circle, native Base Mainnet)
-- Chainlink Functions (architecture-ready)
+- Chainlink Functions (live — subscription 143, Base Mainnet)
 - wagmi v2 + RainbowKit v2 + viem v2 (frontend)
 - Next.js 16 + TypeScript + Tailwind CSS (frontend)
 - Vercel (deployment)
