@@ -38,7 +38,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 | Contract | Address |
 |---|---|
 | EscrowFactory | [0x5Ead178647b041B47A8598d97524d94495b95E57](https://basescan.org/address/0x5Ead178647b041B47A8598d97524d94495b95E57) |
-| BuildLinkFunctionsConsumer | [0x184441c67224b5a395Ab60F025E4a06E8cfC1FAA](https://basescan.org/address/0x184441c67224b5a395Ab60F025E4a06E8cfC1FAA) |
+| BuildLinkFunctionsConsumer | [0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55](https://basescan.org/address/0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55) |
 
 > EscrowVault is deployed per project automatically by EscrowFactory.
 
@@ -180,7 +180,7 @@ It is a financial infrastructure layer that sits alongside existing construction
 - **BuildLink Vault** — Releases milestone payments instantly on Base Mainnet, no banks, no delays
 
 Webhook endpoint (conceptual): POST /api/procore/webhook
-Chainlink Functions consumer: 0x184441c67224b5a395Ab60F025E4a06E8cfC1FAA
+Chainlink Functions consumer: 0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55
 
 ---
 
