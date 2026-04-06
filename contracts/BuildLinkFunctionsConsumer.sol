@@ -4,6 +4,10 @@ pragma solidity ^0.8.20;
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
 import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 
+interface IEscrowVaultUSDC {
+    function approveMilestone(uint256 milestoneIndex) external;
+}
+
 /// @title BuildLinkFunctionsConsumer
 /// @notice Chainlink Functions consumer that bridges off-chain Procore milestone
 ///         approvals to on-chain BuildLink vault execution on Base Mainnet.
@@ -40,6 +44,7 @@ contract BuildLinkFunctionsConsumer is FunctionsClient {
     //       below are BuildLink-specific additions.
     event MilestoneVerified(address indexed vault, uint256 indexed milestoneIndex);
     event OracleResponse(bytes32 indexed requestId, bytes response, bytes err);
+    event ApprovalFailed(address indexed vault, uint256 indexed milestoneIndex);
 
     // ── Errors ────────────────────────────────────────────────────────────────
     error OnlyAdmin();
@@ -131,6 +136,11 @@ contract BuildLinkFunctionsConsumer is FunctionsClient {
             PendingRequest memory pending = pendingRequests[requestId];
             if (pending.vault != address(0)) {
                 emit MilestoneVerified(pending.vault, pending.milestoneIndex);
+                try IEscrowVaultUSDC(pending.vault).approveMilestone(pending.milestoneIndex) {
+                    // success — milestone approved on-chain
+                } catch {
+                    emit ApprovalFailed(pending.vault, pending.milestoneIndex);
+                }
             }
         }
 
