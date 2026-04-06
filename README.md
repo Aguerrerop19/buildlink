@@ -106,7 +106,7 @@ EscrowVaultUSDC.sol
 Shared
 ──────
 BuildLinkFunctionsConsumer.sol
-└── Oracle interaction layer (MVP mock — Chainlink Functions architecture-ready)
+└── Live on Base Mainnet — real FunctionsClient, subscription 143, funded DON, wired to approveMilestone on EscrowVaultUSDC
 ```
 
 ---

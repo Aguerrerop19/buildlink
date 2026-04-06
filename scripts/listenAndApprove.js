@@ -12,7 +12,7 @@ const { ethers } = require("ethers");
 const RPC_URL    = process.env.BASE_MAINNET_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-const CONSUMER_ADDRESS = "0x184441c67224b5a395Ab60F025E4a06E8cfC1FAA";
+const CONSUMER_ADDRESS = "0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55";
 
 if (!RPC_URL)     throw new Error("Missing BASE_MAINNET_RPC_URL in .env");
 if (!PRIVATE_KEY) throw new Error("Missing PRIVATE_KEY in .env");
