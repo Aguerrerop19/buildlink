@@ -21,12 +21,12 @@ There is no programmable infrastructure connecting real-world construction miles
 
 ## The Solution
 
-BuildLink locks project funds in a smart contract escrow. Payments are released automatically when milestone conditions are met — no middlemen, no delays, no disputes.
+BuildLink locks project funds in a smart contract escrow. Payments are released automatically when milestone conditions are met — with reduced delays, faster execution, and a full on-chain audit trail.
 
 - Developer deposits funds into the escrow vault
 - Contractor submits proof of completion (hash of inspection, delivery, sign-off)
 - Developer approves the milestone
-- Funds are released instantly and on-chain
+- Funds are released on-chain upon approval
 - Retainage is held automatically and released at project closeout
 
 ---
@@ -62,6 +62,8 @@ End-to-end Chainlink Functions oracle loop proven on 2026-04-06:
 | sendRequest() called | [0xedef20d0...](https://basescan.org/tx/0xedef20d02efb5444ea82e9524a763492395555bd3e75ff2a70903b9f89e31856) |
 | fulfillRequest + MilestoneVerified | [0x74b065f6...](https://basescan.org/tx/0x74b065f6dc534eb217b222c6b2279d9dc9e88dcfba790217ddb89f5eee4e17a9) |
 | approveMilestone confirmed | [0xa5a89bea...](https://basescan.org/tx/0xa5a89bea0db49bc541ee4857a52a89a21767ae09fb0241cb7f202456e72aa02e) |
+
+This demonstrates a full oracle-driven payment trigger from off-chain approval to on-chain execution.
 
 Chainlink DON fulfilled in ~41 seconds on Base Mainnet.
 Vault: 0x6E181b570d447354d9127eB713960eE32852daDF
@@ -182,19 +184,30 @@ BuildLink is the financial infrastructure layer for construction:
 
 - Automated retainage logic triggered by project completion
 - Tokenized milestone financing for lenders
-- On-chain disbursements replacing wire transfers
+- On-chain disbursements augmenting and improving traditional payment systems
 - Transparent payment flows for all stakeholders
+
+---
+
+## Why Chainlink
+
+BuildLink uses Chainlink Functions to bridge real-world construction approvals with on-chain financial execution.
+
+- **Secure verification of off-chain milestone approvals** — the Chainlink DON fetches and validates approval data from external systems before any payment logic executes
+- **Trust-minimized execution of payments** — no single party controls the trigger; the oracle network enforces the condition
+- **A scalable path to integrate real construction platforms like Procore** — the webhook interface is designed to accept HMAC-signed approval events from existing project management platforms
 
 ---
 
 ## Integration
 
-BuildLink is not a replacement for Procore or Textura.
-It is a financial infrastructure layer that sits alongside existing construction platforms:
+BuildLink does not change how construction teams work — it improves how capital is executed within existing workflows.
 
-- **Procore / Textura** — Project data, SOV approvals, and milestone sign-offs flow from your existing platform
-- **Chainlink Functions** — Bridges off-chain approvals to on-chain execution via oracle network
-- **BuildLink Vault** — Releases milestone payments instantly on Base Mainnet, no banks, no delays
+It is not a replacement for Procore or Textura. It is a financial infrastructure layer that sits alongside them:
+
+- **Procore / Textura** — Handle project data, SOV approvals, milestone documentation, and team workflows
+- **Chainlink Functions** — Bridges off-chain approvals to on-chain execution via a trust-minimized oracle network
+- **BuildLink Vault** — Executes programmable milestone payments on Base Mainnet with reduced delays, faster settlement, and a full audit trail
 
 Webhook endpoint (conceptual): POST /api/procore/webhook
 Chainlink Functions consumer: 0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55
