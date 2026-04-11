@@ -155,8 +155,8 @@
       ]
     },
     "C:\\Users\\Abraham Guerrero\\buildlink\\contracts\\EscrowVaultUSDC.sol": {
-      "lastModificationDate": 1775926745029,
-      "contentHash": "e7255fa4828ed64f13fbb15c72af9aa8",
+      "lastModificationDate": 1775931147068,
+      "contentHash": "4038e51629322a0ad824b69d4ac5b7a0",
       "sourceName": "contracts/EscrowVaultUSDC.sol",
       "solcConfig": {
         "version": "0.8.20",

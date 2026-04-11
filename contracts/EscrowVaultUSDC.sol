@@ -137,7 +137,11 @@ contract EscrowVaultUSDC {
     }
 
     /// @notice Release USDC payment for an approved milestone (checks-effects-interactions).
-    function payMilestone(uint256 milestoneId) external onlyDeveloper {
+    function payMilestone(uint256 milestoneId) external {
+        require(
+            msg.sender == developer || msg.sender == oracleApprover,
+            "Not authorized"
+        );
         require(milestoneId < milestones.length, "Invalid id");
 
         Milestone storage m = milestones[milestoneId];
