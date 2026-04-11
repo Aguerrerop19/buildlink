@@ -149,8 +149,10 @@ async function main() {
   log(`Depositing ${ethers.formatUnits(DEPOSIT_AMOUNT, 6)} USDC into vault...`);
   const depositTx = await vault.depositFunds(DEPOSIT_AMOUNT);
   log(`Deposit tx: ${depositTx.hash}`);
-  await depositTx.wait();
+  const depositReceipt = await depositTx.wait();
+  if (depositReceipt.status !== 1) throw new Error("depositFunds reverted");
   log("Deposit confirmed.");
+  await sleep(3000);
 
   // ── Step 4: Create milestone ──────────────────────────────────────────────
   section("Step 4 — Create Milestone");
@@ -158,9 +160,11 @@ async function main() {
   const milestoneTx = await vault.createMilestone(MILESTONE_AMOUNT);
   log(`Tx: ${milestoneTx.hash}`);
   const milestoneReceipt = await milestoneTx.wait();
+  if (milestoneReceipt.status !== 1) throw new Error("createMilestone reverted");
   log(`Confirmed in block ${milestoneReceipt.blockNumber}`);
   const milestoneIndex = 0n;
   log(`Milestone index: ${milestoneIndex}`);
+  await sleep(3000);
 
   // ── Step 5: Submit proof hash ─────────────────────────────────────────────
   // Use DEMO_PROOF_HASH so the on-chain hash matches what we pass to sendRequest.
@@ -169,8 +173,10 @@ async function main() {
   log(`Proof hash: ${DEMO_PROOF_HASH}`);
   const submitTx = await vault.submitMilestone(milestoneIndex, DEMO_PROOF_HASH);
   log(`Tx: ${submitTx.hash}`);
-  await submitTx.wait();
+  const submitReceipt = await submitTx.wait();
+  if (submitReceipt.status !== 1) throw new Error("submitMilestone reverted");
   log("Proof submitted. Milestone status → SUBMITTED");
+  await sleep(3000);
 
   // ── Step 6: Send Chainlink Functions request ──────────────────────────────
   section("Step 6 — Send Chainlink Functions Request");
