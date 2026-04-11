@@ -8,6 +8,10 @@ interface IEscrowVaultUSDC {
     function approveMilestone(uint256 milestoneIndex) external;
 }
 
+interface IEscrowVaultDeveloper {
+    function developer() external view returns (address);
+}
+
 /// @title BuildLinkFunctionsConsumer
 /// @notice Chainlink Functions consumer that bridges off-chain Procore milestone
 ///         approvals to on-chain BuildLink vault execution on Base Mainnet.
@@ -56,11 +60,12 @@ contract BuildLinkFunctionsConsumer is FunctionsClient {
     string private constant JS_SOURCE =
         "const procoreProjectId = args[0];"
         "const milestoneIndex = args[1];"
+        "const proofHash = args[2];"
         "const res = await Functions.makeHttpRequest({"
         "  url: 'https://buildlink-frontend.vercel.app/api/procore/webhook',"
         "  method: 'POST',"
         "  headers: { 'Content-Type': 'application/json' },"
-        "  data: { procoreProjectId: procoreProjectId, milestoneIndex: parseInt(milestoneIndex) }"
+        "  data: { procoreProjectId: procoreProjectId, milestoneIndex: parseInt(milestoneIndex), proofHash: proofHash }"
         "});"
         "if (res.error) throw Error('Webhook request failed: ' + res.message);"
         "const status = res.data && res.data.status ? res.data.status : 'rejected';"
@@ -77,26 +82,34 @@ contract BuildLinkFunctionsConsumer is FunctionsClient {
     // ── External ──────────────────────────────────────────────────────────────
 
     /// @notice Send a Chainlink Functions request to verify a Procore milestone.
-    ///         The DON will POST to /api/procore/webhook and return "approved" or
-    ///         "rejected". On approval, MilestoneVerified is emitted.
-    /// @param vaultAddress     The BuildLink escrow vault address (ETH or USDC)
+    ///         The DON will POST to /api/procore/webhook with the proofHash and return
+    ///         "approved" or "rejected". On approval, fulfillRequest() calls approveMilestone().
+    ///         Callable by admin OR the developer of the target vault.
+    /// @param vaultAddress     The BuildLink escrow vault address (USDC)
     /// @param milestoneIndex   The milestone index within the vault
     /// @param procoreProjectId The Procore project identifier (off-chain)
+    /// @param proofHash        The milestone's proof hash (hex string, e.g. "0xabc...") — verified by the webhook
     /// @return requestId       The Chainlink Functions request ID
     function sendRequest(
         address vaultAddress,
         uint256 milestoneIndex,
-        string calldata procoreProjectId
+        string calldata procoreProjectId,
+        string calldata proofHash
     ) external returns (bytes32 requestId) {
-        if (msg.sender != admin) revert OnlyAdmin();
         require(vaultAddress != address(0), "Invalid vault");
+        require(
+            msg.sender == admin ||
+            IEscrowVaultDeveloper(vaultAddress).developer() == msg.sender,
+            "Not authorized"
+        );
 
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(JS_SOURCE);
 
-        string[] memory args = new string[](2);
+        string[] memory args = new string[](3);
         args[0] = procoreProjectId;
         args[1] = _uint256ToString(milestoneIndex);
+        args[2] = proofHash;
         req.setArgs(args);
 
         // _sendRequest encodes to CBOR, submits to router, emits RequestSent

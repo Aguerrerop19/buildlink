@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\Users\\Abraham Guerrero\\buildlink\\contracts\\BuildLinkFunctionsConsumer.sol": {
-      "lastModificationDate": 1775445370593,
-      "contentHash": "5732cec2f1754c6ca58aab854a263ad0",
+      "lastModificationDate": 1775928423336,
+      "contentHash": "580b2a0ad1838266ed29da944ea978fc",
       "sourceName": "contracts/BuildLinkFunctionsConsumer.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -38,6 +38,7 @@
       ],
       "artifacts": [
         "BuildLinkFunctionsConsumer",
+        "IEscrowVaultDeveloper",
         "IEscrowVaultUSDC"
       ]
     },

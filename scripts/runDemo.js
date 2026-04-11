@@ -16,7 +16,7 @@
 //
 // Prerequisites:
 //   - Admin wallet has USDC on Base Mainnet
-//   - Consumer 0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55 is registered on subscription 143
+//   - Consumer 0x06E96BcAB94443d17b881eb794AFb477556d74A2 is registered on subscription 143
 //
 // Usage: node scripts/runDemo.js
 
@@ -34,7 +34,7 @@ if (!RPC_URL)     throw new Error("Missing BASE_MAINNET_RPC_URL in .env");
 if (!PRIVATE_KEY) throw new Error("Missing PRIVATE_KEY in .env");
 
 const USDC_ADDRESS         = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const CONSUMER_ADDRESS     = "0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55";
+const CONSUMER_ADDRESS     = "0x06E96BcAB94443d17b881eb794AFb477556d74A2";
 
 // Demo values — adjust as needed
 const CONTRACTOR_ADDRESS   = "0xFaae61D0a3E4d03Eb6C2f6531Eafc6684a6ef4E2"; // using admin as contractor for demo
@@ -43,6 +43,10 @@ const PROJECT_NAME         = "BuildLink Demo Project";
 const MILESTONE_AMOUNT     = 2_000_000n; // 2 USDC (6 decimals)
 const DEPOSIT_AMOUNT       = 3_000_000n; // 3 USDC — covers milestone + retainage
 const PROCORE_PROJECT_ID   = "DEMO-001";
+// Valid proof hash recognized by the webhook — must be in VALID_HASHES on the server.
+// The vault's proofHash is set by submitMilestone(); this string is passed to the oracle
+// which forwards it to the webhook for verification.
+const DEMO_PROOF_HASH      = "0x" + "a".repeat(64);
 
 // ── ABIs ──────────────────────────────────────────────────────────────────────
 
@@ -62,7 +66,7 @@ const USDC_ABI = [
 ];
 
 const CONSUMER_ABI = [
-  "function sendRequest(address vaultAddress, uint256 milestoneIndex, string procoreProjectId) external returns (bytes32 requestId)",
+  "function sendRequest(address vaultAddress, uint256 milestoneIndex, string procoreProjectId, string proofHash) external returns (bytes32 requestId)",
   "event MilestoneVerified(address indexed vault, uint256 indexed milestoneIndex)",
   "event OracleResponse(bytes32 indexed requestId, bytes response, bytes err)",
   "event ApprovalFailed(address indexed vault, uint256 indexed milestoneIndex)",
@@ -141,10 +145,11 @@ async function main() {
   log(`Milestone index: ${milestoneIndex}`);
 
   // ── Step 5: Submit proof hash ─────────────────────────────────────────────
+  // Use DEMO_PROOF_HASH so the on-chain hash matches what we pass to sendRequest.
+  // The webhook verifies this hash against VALID_HASHES — it must match to return "approved".
   section("Step 5 — Submit Proof Hash (simulating contractor)");
-  const proofHash = ethers.keccak256(ethers.toUtf8Bytes(`BuildLink-Demo-Proof-${Date.now()}`));
-  log(`Proof hash: ${proofHash}`);
-  const submitTx = await vault.submitMilestone(milestoneIndex, proofHash);
+  log(`Proof hash: ${DEMO_PROOF_HASH}`);
+  const submitTx = await vault.submitMilestone(milestoneIndex, DEMO_PROOF_HASH);
   log(`Tx: ${submitTx.hash}`);
   await submitTx.wait();
   log("Proof submitted. Milestone status → SUBMITTED");
@@ -155,8 +160,9 @@ async function main() {
   log(`Vault: ${vaultAddress}`);
   log(`Milestone index: ${milestoneIndex}`);
   log(`Procore project ID: ${PROCORE_PROJECT_ID}`);
+  log(`Proof hash (sent to oracle): ${DEMO_PROOF_HASH}`);
 
-  const requestTx = await consumer.sendRequest(vaultAddress, milestoneIndex, PROCORE_PROJECT_ID);
+  const requestTx = await consumer.sendRequest(vaultAddress, milestoneIndex, PROCORE_PROJECT_ID, DEMO_PROOF_HASH);
   log(`Tx submitted: ${requestTx.hash}`);
   const requestReceipt = await requestTx.wait();
   log(`Confirmed in block ${requestReceipt.blockNumber}`);
