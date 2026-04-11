@@ -22,6 +22,7 @@ contract EscrowVaultUSDC {
     uint256 public totalDeposited;
     uint256 public totalPaid;
     uint256 public retainageHeld;
+    address public oracleApprover;
 
     struct Milestone {
         uint256 amount;      // gross amount (USDC, 6 decimals)
@@ -42,6 +43,7 @@ contract EscrowVaultUSDC {
     event MilestonePaid(uint256 indexed milestoneId, uint256 netAmount, uint256 retainageAmount);
     event MilestoneDisputed(uint256 indexed milestoneId, string reason);
     event RetainageReleased(uint256 amount);
+    event OracleApproverSet(address indexed oracleApprover);
 
     modifier onlyDeveloper() {
         require(msg.sender == developer, "Only developer");
@@ -53,7 +55,7 @@ contract EscrowVaultUSDC {
         _;
     }
 
-    constructor(address _usdc, address _contractor, uint256 _retainageBps, uint256 _retainageReleaseThresholdBps) {
+    constructor(address _usdc, address _contractor, uint256 _retainageBps, uint256 _retainageReleaseThresholdBps, address _oracleApprover) {
         require(_usdc != address(0), "Invalid USDC");
         require(_contractor != address(0), "Invalid contractor");
         require(_retainageBps <= 2000, "Retainage too high"); // max 20%
@@ -63,6 +65,9 @@ contract EscrowVaultUSDC {
         contractor = _contractor;
         retainageBps = _retainageBps;
         retainageReleaseThresholdBps = _retainageReleaseThresholdBps;
+        oracleApprover = _oracleApprover;
+
+        emit OracleApproverSet(_oracleApprover);
     }
 
     /// @notice Developer deposits USDC into escrow.
@@ -113,8 +118,13 @@ contract EscrowVaultUSDC {
         emit MilestoneSubmitted(milestoneId, proofHash);
     }
 
-    /// @notice Developer approves milestone after off-chain verification (PM sign-off, inspector report).
-    function approveMilestone(uint256 milestoneId) external onlyDeveloper {
+    /// @notice Developer or oracle approves milestone after off-chain verification.
+    ///         Accepts calls from developer wallet or the authorized oracleApprover (BuildLinkFunctionsConsumer).
+    function approveMilestone(uint256 milestoneId) external {
+        require(
+            msg.sender == developer || msg.sender == oracleApprover,
+            "Not authorized"
+        );
         require(milestoneId < milestones.length, "Invalid id");
 
         Milestone storage m = milestones[milestoneId];

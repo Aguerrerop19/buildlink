@@ -44,9 +44,10 @@ contract EscrowFactoryUSDC {
     function createProject(
         address contractor,
         uint256 retainageBps,
-        string calldata name
+        string calldata name,
+        address oracleApprover
     ) external returns (address vault, uint256 projectId) {
-        EscrowVaultUSDC v = new EscrowVaultUSDC(usdc, contractor, retainageBps, 8000);
+        EscrowVaultUSDC v = new EscrowVaultUSDC(usdc, contractor, retainageBps, 8000, oracleApprover);
 
         projects.push(Project({
             vault: address(v),

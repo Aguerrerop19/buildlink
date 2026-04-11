@@ -46,7 +46,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 | Contract | Address |
 |---|---|
-| EscrowFactoryUSDC | [0x52Fe0996920104B45ad8e3183A48df4a62668BC0](https://basescan.org/address/0x52Fe0996920104B45ad8e3183A48df4a62668BC0) |
+| EscrowFactoryUSDC | [0x3ABfB4D03373305b5a7904e7cc59d57739D359C4](https://basescan.org/address/0x3ABfB4D03373305b5a7904e7cc59d57739D359C4) |
 | USDC (Base Mainnet) | [0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913](https://basescan.org/address/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) |
 
 > EscrowVaultUSDC is deployed per project automatically by EscrowFactoryUSDC. Contract verified on Basescan.
