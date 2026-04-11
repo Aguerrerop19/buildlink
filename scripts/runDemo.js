@@ -1,23 +1,22 @@
 // runDemo.js
-// End-to-end BuildLink demo on Base Mainnet.
+// End-to-end BuildLink demo on Base Mainnet — Phase 2 (trustless oracle).
 //
 // What this script does:
 //   1. Deploys EscrowVaultUSDC directly from the admin wallet (NOT via factory)
 //      NOTE: Using the factory would set developer = factory address, not admin wallet.
 //            Deploying directly sets developer = admin wallet, which is required for
 //            depositFunds(), createMilestone(), submitMilestone(), and sendRequest().
+//      oracleApprover is set to BuildLinkFunctionsConsumer so it can call approveMilestone directly.
 //   2. Approves USDC spend and deposits funds into the vault
 //   3. Creates a milestone
 //   4. Submits proof hash (simulating contractor submission from admin wallet for demo)
 //   5. Calls sendRequest() on BuildLinkFunctionsConsumer
 //      → DON fetches /api/procore/webhook → returns "approved"
-//      → fulfillRequest() emits MilestoneVerified
-//      → listenAndApprove.js (run separately) calls approveMilestone()
+//      → fulfillRequest() calls approveMilestone() directly on the vault (no listener needed)
 //
 // Prerequisites:
 //   - Admin wallet has USDC on Base Mainnet
 //   - Consumer 0x01fBA9F9FA09dCf813D2bB2987a242dDD6848c55 is registered on subscription 143
-//   - Run listenAndApprove.js in a separate terminal before running this script
 //
 // Usage: node scripts/runDemo.js
 
@@ -110,11 +109,12 @@ async function main() {
   log(`  Retainage:  ${RETAINAGE_BPS / 100}%`);
 
   const VaultFactory = new ethers.ContractFactory(VAULT_USDC_ABI_FULL, VAULT_USDC_BYTECODE, wallet);
-  const vault = await VaultFactory.deploy(USDC_ADDRESS, CONTRACTOR_ADDRESS, RETAINAGE_BPS, 8000);
+  const vault = await VaultFactory.deploy(USDC_ADDRESS, CONTRACTOR_ADDRESS, RETAINAGE_BPS, 8000, CONSUMER_ADDRESS);
   await vault.waitForDeployment();
   const vaultAddress = await vault.getAddress();
   log(`Vault deployed at: ${vaultAddress}`);
   log(`Developer (admin wallet): ${wallet.address}`);
+  log(`oracleApprover: ${CONSUMER_ADDRESS}`);
 
   // ── Step 3: Approve USDC and deposit into vault ───────────────────────────
   section("Step 3 — Approve USDC and Deposit into Vault");
@@ -172,14 +172,11 @@ async function main() {
   The Chainlink DON is now executing the JS source:
     → POST /api/procore/webhook
     → Expects { status: "approved" }
-    → fulfillRequest() will emit MilestoneVerified
-    → listenAndApprove.js will call approveMilestone()
+    → fulfillRequest() emits MilestoneVerified
+    → fulfillRequest() calls approveMilestone() directly on the vault (Phase 2 — no listener needed)
 
   Watch for fulfillment on Basescan:
   https://basescan.org/address/${CONSUMER_ADDRESS}#events
-
-  If listenAndApprove.js is running in another terminal,
-  it will call approveMilestone() automatically when MilestoneVerified fires.
   `);
 }
 
