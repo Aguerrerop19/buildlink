@@ -120,6 +120,8 @@ async function main() {
   log(`Vault deployed at: ${vaultAddress}`);
   log(`Developer (admin wallet): ${wallet.address}`);
   log(`oracleApprover: ${CONSUMER_ADDRESS}`);
+  // Wait for Alchemy's in-flight slot to clear after the deploy tx.
+  await sleep(3000);
 
   // ── Step 3: Approve USDC and deposit into vault ───────────────────────────
   section("Step 3 — Approve USDC and Deposit into Vault");

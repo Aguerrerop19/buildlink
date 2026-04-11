@@ -55,15 +55,26 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 
 ## Live Demo — Base Mainnet
 
-End-to-end Chainlink Functions oracle loop proven on 2026-04-06:
+### 2026-04-11 — Full oracle loop with automatic payment (Phase 2)
+
+| Step | Transaction |
+|---|---|
+| sendRequest() called | [0xc90b7755...](https://basescan.org/tx/0xc90b77552e20858de1ea2ad2f0533fd79a94e2ebaa799212a1bb8c91be2b4c55) |
+| fulfillRequest + MilestoneVerified + MilestonePaid | [0x7729e3a1...](https://basescan.org/tx/0x7729e3a1) — block 44570760 |
+
+1.9 USDC transferred to contractor automatically. approveMilestone + payMilestone both executed atomically from fulfillRequest — no off-chain listener required.
+
+Vault: 0xf9b242Eb80F30ce5f81cE47eFfa3c2a2FaDEb60c
+Consumer: 0xAf82c9E5Dfc7c6380c2c0a3407de7f8030503c95
+Subscription ID: 143
+
+### 2026-04-06 — Initial oracle loop proof (Phase 1)
 
 | Step | Transaction |
 |---|---|
 | sendRequest() called | [0xedef20d0...](https://basescan.org/tx/0xedef20d02efb5444ea82e9524a763492395555bd3e75ff2a70903b9f89e31856) |
 | fulfillRequest + MilestoneVerified | [0x74b065f6...](https://basescan.org/tx/0x74b065f6dc534eb217b222c6b2279d9dc9e88dcfba790217ddb89f5eee4e17a9) |
 | approveMilestone confirmed | [0xa5a89bea...](https://basescan.org/tx/0xa5a89bea0db49bc541ee4857a52a89a21767ae09fb0241cb7f202456e72aa02e) |
-
-This demonstrates a full oracle-driven payment trigger from off-chain approval to on-chain execution.
 
 Chainlink DON fulfilled in ~41 seconds on Base Mainnet.
 Vault: 0x6E181b570d447354d9127eB713960eE32852daDF
