@@ -38,7 +38,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 | Contract | Address |
 |---|---|
 | EscrowFactory | [0x5Ead178647b041B47A8598d97524d94495b95E57](https://basescan.org/address/0x5Ead178647b041B47A8598d97524d94495b95E57) |
-| BuildLinkFunctionsConsumer | [0x06E96BcAB94443d17b881eb794AFb477556d74A2](https://basescan.org/address/0x06E96BcAB94443d17b881eb794AFb477556d74A2) |
+| BuildLinkFunctionsConsumer | [0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C](https://basescan.org/address/0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C) |
 
 > EscrowVault is deployed per project automatically by EscrowFactory.
 
@@ -67,7 +67,7 @@ This demonstrates a full oracle-driven payment trigger from off-chain approval t
 
 Chainlink DON fulfilled in ~41 seconds on Base Mainnet.
 Vault: 0x6E181b570d447354d9127eB713960eE32852daDF
-Consumer: 0x06E96BcAB94443d17b881eb794AFb477556d74A2
+Consumer: 0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C
 Subscription ID: 143
 
 ---
@@ -210,7 +210,7 @@ It is not a replacement for Procore or Textura. It is a financial infrastructure
 - **BuildLink Vault** — Executes programmable milestone payments on Base Mainnet with reduced delays, faster settlement, and a full audit trail
 
 Webhook endpoint (conceptual): POST /api/procore/webhook
-Chainlink Functions consumer: 0x06E96BcAB94443d17b881eb794AFb477556d74A2
+Chainlink Functions consumer: 0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C
 
 ---
 

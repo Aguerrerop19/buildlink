@@ -16,7 +16,7 @@
 //
 // Prerequisites:
 //   - Admin wallet has USDC on Base Mainnet
-//   - Consumer 0x06E96BcAB94443d17b881eb794AFb477556d74A2 is registered on subscription 143
+//   - Consumer 0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C is registered on subscription 143
 //
 // Usage: node scripts/runDemo.js
 
@@ -34,7 +34,7 @@ if (!RPC_URL)     throw new Error("Missing BASE_MAINNET_RPC_URL in .env");
 if (!PRIVATE_KEY) throw new Error("Missing PRIVATE_KEY in .env");
 
 const USDC_ADDRESS         = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const CONSUMER_ADDRESS     = "0x06E96BcAB94443d17b881eb794AFb477556d74A2";
+const CONSUMER_ADDRESS     = "0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C";
 
 // Demo values — adjust as needed
 const CONTRACTOR_ADDRESS   = "0xFaae61D0a3E4d03Eb6C2f6531Eafc6684a6ef4E2"; // using admin as contractor for demo
