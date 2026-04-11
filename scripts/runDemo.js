@@ -16,7 +16,7 @@
 //
 // Prerequisites:
 //   - Admin wallet has USDC on Base Mainnet
-//   - Consumer 0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C is registered on subscription 143
+//   - Consumer 0xAf82c9E5Dfc7c6380c2c0a3407de7f8030503c95 is registered on subscription 143
 //
 // Usage: node scripts/runDemo.js
 
@@ -34,7 +34,7 @@ if (!RPC_URL)     throw new Error("Missing BASE_MAINNET_RPC_URL in .env");
 if (!PRIVATE_KEY) throw new Error("Missing PRIVATE_KEY in .env");
 
 const USDC_ADDRESS         = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-const CONSUMER_ADDRESS     = "0x8B8E315F70BFD8F9123D41F2611E2E269dcA3A2C";
+const CONSUMER_ADDRESS     = "0xAf82c9E5Dfc7c6380c2c0a3407de7f8030503c95";
 
 // Demo values — adjust as needed
 const CONTRACTOR_ADDRESS   = "0xFaae61D0a3E4d03Eb6C2f6531Eafc6684a6ef4E2"; // using admin as contractor for demo
@@ -75,6 +75,7 @@ const CONSUMER_ABI = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function log(msg) { console.log(`[${new Date().toISOString()}] ${msg}`); }
+function sleep(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
 function section(title) {
   console.log("\n──────────────────────────────────────────────");
   console.log(` ${title}`);
@@ -122,11 +123,28 @@ async function main() {
 
   // ── Step 3: Approve USDC and deposit into vault ───────────────────────────
   section("Step 3 — Approve USDC and Deposit into Vault");
+
+  // Only reset if a stale allowance exists — skips a tx on fresh vaults and
+  // avoids Alchemy's in-flight limit when allowance is already 0.
+  const existingAllowance = await usdc.allowance(wallet.address, vaultAddress);
+  if (existingAllowance > 0n) {
+    log(`Stale allowance detected (${ethers.formatUnits(existingAllowance, 6)} USDC) — resetting to 0...`);
+    const resetTx = await usdc.approve(vaultAddress, 0n);
+    log(`Reset tx: ${resetTx.hash}`);
+    await resetTx.wait();
+    log("Allowance reset confirmed.");
+    // Wait 2s for Alchemy's in-flight slot to clear before the next tx.
+    await sleep(2000);
+  } else {
+    log("Allowance is 0 — skipping reset.");
+  }
+
   log(`Approving ${ethers.formatUnits(DEPOSIT_AMOUNT, 6)} USDC for vault...`);
   const approveTx = await usdc.approve(vaultAddress, DEPOSIT_AMOUNT);
   log(`Approve tx: ${approveTx.hash}`);
   await approveTx.wait();
   log("Approval confirmed.");
+  await sleep(2000); // Allow Alchemy mempool to settle before deposit tx.
 
   log(`Depositing ${ethers.formatUnits(DEPOSIT_AMOUNT, 6)} USDC into vault...`);
   const depositTx = await vault.depositFunds(DEPOSIT_AMOUNT);

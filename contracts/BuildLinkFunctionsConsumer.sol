@@ -26,7 +26,7 @@ contract BuildLinkFunctionsConsumer is FunctionsClient {
     // Base Mainnet Functions router: 0xf9B8fc078197181C841c296C876945aaa425B278
     uint64  public constant SUBSCRIPTION_ID    = 143;
     bytes32 public constant DON_ID             = 0x66756e2d626173652d6d61696e6e65742d310000000000000000000000000000;
-    uint32  public constant CALLBACK_GAS_LIMIT = 500_000;
+    uint32  public constant CALLBACK_GAS_LIMIT = 300_000;
 
     // ── Access control ────────────────────────────────────────────────────────
     address public immutable admin;
