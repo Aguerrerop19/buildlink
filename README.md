@@ -60,7 +60,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 | Step | Transaction |
 |---|---|
 | sendRequest() called | [0xc90b7755...](https://basescan.org/tx/0xc90b77552e20858de1ea2ad2f0533fd79a94e2ebaa799212a1bb8c91be2b4c55) |
-| fulfillRequest + MilestoneVerified + MilestonePaid | [0x7729e3a1...](https://basescan.org/tx/0x7729e3a1) — block 44570760 |
+| fulfillRequest + MilestoneVerified + MilestonePaid | [0x74b065f6...](https://basescan.org/tx/0x74b065f6dc534eb217b222c6b2279d9dc9e88dcfba790217ddb89f5eee4e17a9) — block 44570760 |
 
 1.9 USDC transferred to contractor automatically. approveMilestone + payMilestone both executed atomically from fulfillRequest — no off-chain listener required.
 
@@ -252,7 +252,9 @@ It is not a replacement for Procore or Textura. It is a financial infrastructure
 - **Chainlink Functions** — Bridges off-chain approvals to on-chain execution via a trust-minimized oracle network
 - **BuildLink Vault** — Executes programmable milestone payments on Base Mainnet with reduced delays, faster settlement, and a full audit trail
 
-Webhook endpoint (conceptual): POST /api/procore/webhook
+**Oracle trust model:** The webhook is the integration point for Procore's approval API. In production, it validates HMAC signatures from Procore webhooks. The Chainlink DON enforces that payment cannot execute without the webhook returning "approved" — BuildLink cannot approve or pay milestones unilaterally. The oracle adds a verifiable, tamper-evident layer between off-chain approvals and on-chain fund release.
+
+Webhook endpoint (live): POST /api/procore/webhook
 Chainlink Functions consumer: 0xAf82c9E5Dfc7c6380c2c0a3407de7f8030503c95
 
 ---
