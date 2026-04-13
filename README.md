@@ -189,6 +189,38 @@ npx hardhat run scripts/deployUSDC.js --network base
 
 ---
 
+## Frontend Features
+
+Live at [buildlink-frontend.vercel.app](https://buildlink-frontend.vercel.app)
+
+### Authentication
+- **Privy integration** — email and SMS login for non-crypto users; embedded wallet created automatically on first login
+- **Coinbase Smart Wallet** — biometric login on mobile (Face ID / fingerprint), no seed phrase required
+- **RainbowKit** — MetaMask, WalletConnect, and all standard wallet connectors retained
+
+### Developer UX
+- Create ETH or USDC escrow projects from the dashboard
+- Deposit USDC, create milestones, approve and release payments on-chain
+- Shareable project link generated on creation — copy and send to contractor
+- Dispute milestone with on-chain reason
+
+### Contractor UX
+- `/contractor` page — wallet-filtered view showing only assigned projects
+- Submit milestone proof via text description; `keccak256` hash computed silently in the browser
+- Post-submission confirmation message (plain English, auto-dismisses after 10 seconds)
+- Re-submit after dispute
+
+### Public Dashboard
+- `/explore` — all USDC projects visible without wallet connection
+- Project cards show deposited amount, milestones, retainage %, creation date
+
+### Oracle Integration
+- Chainlink Functions oracle loop proven end-to-end on Base Mainnet (2026-04-11)
+- `approveMilestone` + `payMilestone` execute atomically from `fulfillRequest` — no off-chain listener required
+- USDC transferred to contractor automatically upon DON fulfillment
+
+---
+
 ## Vision
 
 BuildLink is the financial infrastructure layer for construction:
