@@ -55,13 +55,14 @@ contract EscrowVaultUSDC {
         _;
     }
 
-    constructor(address _usdc, address _contractor, uint256 _retainageBps, uint256 _retainageReleaseThresholdBps, address _oracleApprover) {
+    constructor(address _developer, address _usdc, address _contractor, uint256 _retainageBps, uint256 _retainageReleaseThresholdBps, address _oracleApprover) {
+        require(_developer != address(0), "Invalid developer");
         require(_usdc != address(0), "Invalid USDC");
         require(_contractor != address(0), "Invalid contractor");
         require(_retainageBps <= 2000, "Retainage too high"); // max 20%
 
         usdc = IERC20(_usdc);
-        developer = msg.sender;
+        developer = _developer;
         contractor = _contractor;
         retainageBps = _retainageBps;
         retainageReleaseThresholdBps = _retainageReleaseThresholdBps;
