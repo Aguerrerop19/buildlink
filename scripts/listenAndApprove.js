@@ -1,3 +1,7 @@
+// DEPRECATED — Phase 2 complete. The oracle now calls approveMilestone and payMilestone
+// directly from fulfillRequest. This off-chain listener is no longer needed.
+// Kept for reference only.
+
 // listenAndApprove.js
 // Listens for MilestoneVerified events from BuildLinkFunctionsConsumer on Base Mainnet.
 // When detected, calls approveMilestone() on the target EscrowVaultUSDC from the admin wallet.

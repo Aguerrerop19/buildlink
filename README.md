@@ -50,6 +50,7 @@ BuildLink locks project funds in a smart contract escrow. Payments are released 
 | USDC (Base Mainnet) | [0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913](https://basescan.org/address/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913) |
 
 > EscrowVaultUSDC is deployed per project automatically by EscrowFactoryUSDC. Contract verified on Basescan.
+> EscrowFactoryUSDC redeployed 2026-04-13 — fixed developer address bug. Vaults now correctly set msg.sender (user wallet) as developer instead of the factory address.
 
 ---
 
